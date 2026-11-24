@@ -1,0 +1,9 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+artifacts/**
+!artifacts/**/
+!artifacts/index/manifest.json
+!artifacts/*/card.json
+!artifacts/metrics_baseline.json
