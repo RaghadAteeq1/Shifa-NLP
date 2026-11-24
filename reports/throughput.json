@@ -1,0 +1,55 @@
+{
+  "model": "onnx-int8",
+  "n": 256,
+  "rows": [
+    {
+      "batch_size": 1,
+      "naive_items_per_sec": 53.480749386785405,
+      "bucketed_items_per_sec": 51.85916331112597,
+      "naive_pad_waste": 0.0,
+      "bucketed_pad_waste": 0.0
+    },
+    {
+      "batch_size": 2,
+      "naive_items_per_sec": 43.92111363916024,
+      "bucketed_items_per_sec": 50.09291955783899,
+      "naive_pad_waste": 0.2094972067039106,
+      "bucketed_pad_waste": 0.005431309904153303
+    },
+    {
+      "batch_size": 4,
+      "naive_items_per_sec": 36.52021822585097,
+      "bucketed_items_per_sec": 48.27849042567853,
+      "naive_pad_waste": 0.3783945686900958,
+      "bucketed_pad_waste": 0.01736111111111116
+    },
+    {
+      "batch_size": 8,
+      "naive_items_per_sec": 24.05003426472736,
+      "bucketed_items_per_sec": 43.16645388426582,
+      "naive_pad_waste": 0.5328631452581032,
+      "bucketed_pad_waste": 0.04156403940886699
+    },
+    {
+      "batch_size": 16,
+      "naive_items_per_sec": 19.19310952109684,
+      "bucketed_items_per_sec": 44.21439679208949,
+      "naive_pad_waste": 0.6170029527559056,
+      "bucketed_pad_waste": 0.082252358490566
+    },
+    {
+      "batch_size": 32,
+      "naive_items_per_sec": 16.52775565791617,
+      "bucketed_items_per_sec": 38.546616554454914,
+      "naive_pad_waste": 0.6645474137931034,
+      "bucketed_pad_waste": 0.16136853448275867
+    },
+    {
+      "batch_size": 64,
+      "naive_items_per_sec": 15.18947519360407,
+      "bucketed_items_per_sec": 34.39167036387674,
+      "naive_pad_waste": 0.6997492283950617,
+      "bucketed_pad_waste": 0.33369006849315064
+    }
+  ]
+}

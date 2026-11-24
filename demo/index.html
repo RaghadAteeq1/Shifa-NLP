@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شفاء · مكتب فرز رسائل المرضى</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e5e4f'/%3E%3Cpath d='M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#f6f8f7;--panel:#ffffff;--wash:#e9f1ee;--ink:#10231f;--muted:#536a65;--rule:#d6e1dd;
+  --pine:#0e5e4f;--on-pine:#ffffff;--tape:#10231f;--on-tape:#f6f8f7;
+  --amber:#8a5200;--amber-wash:#fbefd9;--danger:#a3213f;--danger-wash:#fae6eb;
+  --t-appointment:#1d5fd1;--t-billing:#8f5100;--t-lab_results:#6d3fc8;--t-prescription:#0e6f5f;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#0c1513;--panel:#121f1c;--wash:#18302a;--ink:#e4efec;--muted:#9bb2ad;--rule:#253934;
+  --pine:#5fcfb8;--on-pine:#062019;--tape:#e4efec;--on-tape:#0c1513;
+  --amber:#f2c06a;--amber-wash:#33270f;--danger:#f59ab0;--danger-wash:#3a1c25;
+  --t-appointment:#86adff;--t-billing:#f0b45a;--t-lab_results:#bba0ff;--t-prescription:#5fcfb8;
+}}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI","Noto Sans Arabic",Tahoma,sans-serif}
+h1,h2,p{margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* masthead: a solid pine bar, the only large block of brand colour on the page */
+.mast{background:var(--pine);color:var(--on-pine)}
+.mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:18px}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand h1{font-size:1.9rem;line-height:1.1;font-weight:800}
+.brand p{opacity:.85;font-size:.95rem}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;border:1px solid color-mix(in srgb,var(--on-pine) 35%,transparent);border-radius:999px;padding:3px 12px}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}
+.status.on::before{opacity:1;background:#7ef0c4}.status.off::before{opacity:1;background:#ffb3c1}
+.note{color:var(--muted);font-size:.86rem;padding-block:14px 0}
+
+/* desk: input on the right (RTL start), ticket on the left */
+.desk{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:28px;padding-block:22px 8px;align-items:start}
+@media(max-width:860px){.desk{grid-template-columns:1fr}}
+h2{font-size:1.05rem;margin-bottom:10px}
+.examples{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+textarea{display:block;width:100%;min-height:150px;font:inherit;line-height:1.8;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:14px;resize:vertical}
+textarea:focus{border-color:var(--pine)}
+.hint{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.8rem;margin-top:6px}
+.actions{display:flex;gap:8px;margin-top:14px}
+button{font:inherit;cursor:pointer;min-height:44px;border-radius:10px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);padding:6px 16px;transition:border-color .15s var(--ease),filter .15s var(--ease),transform .1s var(--ease)}
+@media (hover:hover){button:hover{border-color:var(--pine)}button.go:hover{filter:brightness(1.1)}}
+button:active{transform:scale(.97)}
+button.ex{border-radius:999px;font-size:.88rem;min-height:40px;padding:4px 14px}
+button.ex small{color:var(--muted);margin-inline-start:6px}
+button.go{background:var(--pine);border-color:var(--pine);color:var(--on-pine);font-weight:700;padding:8px 24px}
+button:disabled{opacity:.6;cursor:wait;transform:none}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+
+/* the routing ticket */
+.ticket{background:var(--panel);border:1px solid var(--rule);border-radius:16px;overflow:hidden;min-height:330px}
+.idle{display:grid;place-items:center;text-align:center;min-height:330px;padding:24px;color:var(--muted)}
+.idle strong{display:block;color:var(--ink);font-size:1.1rem;margin-bottom:4px}
+.route{--tc:var(--pine);display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:22px 24px;background:var(--tc);color:var(--panel)}
+.route .to{font-size:.9rem;opacity:.9}
+.route .dest{font-size:2.2rem;line-height:1.15;font-weight:800}
+.route .conf{text-align:end;font-variant-numeric:tabular-nums}
+.route .conf b{display:block;font-size:2.2rem;line-height:1.1;direction:ltr}
+.route .conf span{font-size:.85rem;opacity:.9}
+.route.low{background:var(--amber-wash);color:var(--amber);box-shadow:inset 0 0 0 2px var(--amber)}
+.review{padding:10px 24px;background:var(--amber-wash);color:var(--amber);font-weight:600;font-size:.9rem;border-top:1px solid var(--rule)}
+.body{padding:18px 24px 20px}
+.row{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.row:last-child{border-bottom:0}
+.row>span:first-child{color:var(--muted);font-size:.88rem}
+.doc{line-height:2.1}
+.tape{display:inline-block;background:var(--tape);color:var(--on-tape);border-radius:3px;padding:0 10px;font-size:.78rem;font-weight:600;line-height:1.75;vertical-align:1px;min-width:4.5em;text-align:center}
+.caught{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
+.alts{display:grid;gap:6px}
+.alt{--tc:var(--muted);display:grid;grid-template-columns:96px 1fr 42px;gap:10px;align-items:center;font-size:.86rem}
+.track{height:6px;background:var(--wash);border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;background:var(--tc);transform:scaleX(0);transform-origin:right;transition:transform .55s var(--ease)}
+.shown .fill{transform:scaleX(1)}
+.num{font-variant-numeric:tabular-nums;direction:ltr;text-align:end}
+.ent{display:inline-block;border:1px solid var(--rule);border-radius:7px;padding:0 9px;margin:2px;font-size:.88rem}
+.ent i{font-style:normal;color:var(--pine);font-size:.74rem;margin-inline-start:5px}
+.sim{padding:6px 0}.sim small{display:block;color:var(--muted)}
+.muted{color:var(--muted);font-size:.88rem}
+.tech{color:var(--muted);font-size:.76rem;direction:ltr;text-align:end;padding:10px 24px;border-top:1px solid var(--rule);background:var(--paper)}
+.err{margin:24px;background:var(--danger-wash);color:var(--danger);padding:12px 14px;border-radius:10px}
+.route,.body{animation:in .35s var(--ease) both}.body{animation-delay:.06s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+
+/* the queue (batch) */
+.queue{padding-block:26px 48px}
+.queue-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.queue textarea{min-height:110px}
+.mix{display:flex;height:14px;border-radius:99px;overflow:hidden;margin-top:20px;gap:2px}
+.mix span{background:var(--tc)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 6px;font-size:.86rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--tc)}
+.items{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--rule);border-inline-start:5px solid var(--tc);border-radius:10px;padding:10px 14px}
+.item .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .to{font-weight:700;color:var(--tc);white-space:nowrap}
+.item .flag{display:block;color:var(--amber);font-size:.76rem;font-weight:600}
+.qwarn{background:var(--amber-wash);color:var(--amber);border-radius:10px;padding:9px 14px;font-size:.88rem;margin-top:10px}
+.qtech{color:var(--muted);font-size:.76rem;direction:ltr;text-align:end;margin-top:10px}
+
+@media (max-width:560px){
+  .route{flex-direction:column;align-items:flex-start}.route .conf{text-align:start}
+  .route .dest,.route .conf b{font-size:1.8rem}
+  .row{grid-template-columns:1fr;gap:4px}
+  .item{grid-template-columns:minmax(0,1fr) auto}.item .num{grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){.route,.body{animation:none}.fill{transition:none}button{transition:none}}
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <div class="brand"><h1>شفاء</h1><p>مكتب فرز رسائل المرضى</p></div>
+    <span id="status" class="status" role="status">جارٍ الاتصال بالخدمة…</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="note">بيانات اصطناعية للتجربة. أرقام الجوال والملفات والهويات تنخفي قبل ما يقرأ النموذج الرسالة.</p>
+
+  <section class="desk">
+    <div>
+      <h2>رسالة المريض</h2>
+      <div class="examples" id="ex"></div>
+      <textarea id="msg" aria-label="رسالة المريض" maxlength="2000" placeholder="الصق رسالة المريض هنا"></textarea>
+      <div class="hint"><span>Ctrl + Enter للتحليل</span><span id="cnt" dir="ltr">0 / 2000</span></div>
+      <div class="actions"><button class="go" id="go">حلّل الرسالة</button><button id="clr">مسح</button></div>
+    </div>
+
+    <div class="ticket" id="out" aria-live="polite" aria-label="نتيجة التحليل">
+      <div class="idle"><div><strong>وين تروح هالرسالة؟</strong>اختر مثالاً أو الصق رسالة، واضغط «حلّل الرسالة».</div></div>
+    </div>
+  </section>
+
+  <section class="queue" aria-labelledby="q-h">
+    <div class="queue-head"><h2 id="q-h">طابور الرسائل</h2><span class="muted">رسالة في كل سطر، حتى 256 رسالة</span></div>
+    <textarea id="bt" aria-label="رسائل الطابور"></textarea>
+    <div class="actions"><button class="go" id="bgo">فرز الطابور</button></div>
+    <div id="bout" aria-live="polite"></div>
+  </section>
+</main>
+<script>
+const EX=[
+ ["تأجيل موعد","خليجي","السلام عليكم، ابي أأجل موعدي يوم الأحد عند د. خالد، ورقم ملفي MRN-482913 وجوالي 0551234567"],
+ ["نتيجة تحليل","فصحى","أرجو تزويدي بنتيجة تحليل السكر التراكمي، حيث أجريته الثلاثاء الماضي"],
+ ["خصم مكرر","English","Hi, I was charged twice for my visit with Dr. Sara on 12 March. My email is ali@example.com"],
+ ["تجديد وصفة","خليجي","ابي اجدد وصفة ميتفورمين"]];
+const TL={appointment:'المواعيد',billing:'الفواتير',lab_results:'نتائج المختبر',prescription:'الوصفات'};
+const DEST={appointment:'قسم المواعيد',billing:'قسم الفواتير',lab_results:'المختبر',prescription:'الصيدلية'};
+const DL={gulf:'خليجي',msa:'فصحى',en:'إنجليزي'};
+const PII={MRN:'رقم ملف',PHONE:'جوال',EMAIL:'إيميل',NID:'هوية',CARD:'بطاقة',IBAN:'آيبان'};
+const PII_RE=/\[(MRN|PHONE|EMAIL|NID|CARD|IBAN)\]/g;
+const LOW=0.6;                                   // below this confidence the agent should check the topic by hand
+const $=i=>document.getElementById(i), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct=p=>Math.round(p*100)+'٪';
+const tc=l=>`--tc:var(--t-${l in TL?l:'x'})`;   // topic colour as a CSS variable
+let H={};                                        // which models the service has loaded (from /v1/health)
+
+fetch('/v1/health').then(r=>r.json()).then(h=>{
+  H=h; $('status').className='status on'; $('status').textContent='الخدمة تعمل';
+  $('status').title='النموذج: '+h.topic_model;
+}).catch(()=>{$('status').className='status off'; $('status').textContent='الخدمة متوقفة'});
+
+$('ex').innerHTML=EX.map(([label,lang],i)=>`<button class="ex" data-i="${i}">${label}<small>${lang}</small></button>`).join('');
+$('ex').onclick=e=>{const b=e.target.closest('button');if(b){$('msg').value=EX[+b.dataset.i][2];count();$('msg').focus()}};
+$('clr').onclick=()=>{$('msg').value='';count();$('msg').focus()};
+$('bt').value=EX.map(x=>x[2]).join('\n');
+function count(){$('cnt').textContent=$('msg').value.length+' / 2000'}
+$('msg').oninput=count;
+$('msg').onkeydown=e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))$('go').click()};
+$('bt').onkeydown=e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))$('bgo').click()};
+
+async function post(path,body){
+  let r;
+  try{r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}
+  catch{throw new Error('ما قدرنا نوصل للخدمة. شغّلها بـ make serve ثم افتح /demo.')}
+  if(r.status===422)throw new Error('الرسالة لازم ما تكون فاضية وتكون أقل من 2000 حرف، والطابور 256 رسالة كحد أقصى.');
+  if(r.status===413)throw new Error('الطلب كبير جداً. قلّل عدد الرسائل أو طولها.');
+  if(!r.ok)throw new Error('الخدمة رجّعت خطأ ('+r.status+'). جرّب مرة ثانية.');
+  return r.json();
+}
+async function busy(btn,label,work){
+  const old=btn.textContent; btn.disabled=true; btn.setAttribute('aria-busy','true'); btn.textContent=label;
+  try{await work()}finally{btn.disabled=false; btn.removeAttribute('aria-busy'); btn.textContent=old}
+}
+
+$('go').onclick=()=>{
+  const text=$('msg').value.trim(); if(!text){$('msg').focus();return}
+  return busy($('go'),'جارٍ التحليل…',async()=>{
+    try{
+      const a=await post('/v1/analyze',{text,k:5});
+      const t=a.topic, low=t.confidence<LOW;
+      const others=Object.entries(t.probs).sort((x,y)=>y[1]-x[1]).slice(1);
+      const caught=[...a.masked.matchAll(PII_RE)].map(m=>PII[m[1]]);
+      const doc=esc(a.masked).replace(PII_RE,(_,k)=>`<span class="tape" title="مخفي: ${PII[k]}">${PII[k]}</span>`);
+      $('out').classList.remove('shown');
+      $('out').innerHTML=
+       `<div class="route${low?' low':''}" style="${tc(t.label)}">
+          <div><div class="to">تتحوّل إلى</div><div class="dest">${DEST[t.label]||esc(t.label)}</div></div>
+          <div class="conf"><b>${pct(t.confidence)}</b><span>ثقة النموذج</span></div>
+        </div>`+
+       (low?`<div class="review" role="alert">الثقة منخفضة. اقرأ الرسالة وتأكد من الجهة قبل التحويل.</div>`:'')+
+       `<div class="body">
+          <div class="row"><span>بعد الإخفاء</span><div><div class="doc">${doc}</div>${caught.length?`<span class="caught">انخفى ${caught.length}: ${caught.join('، ')}</span>`:''}</div></div>
+          <div class="row"><span>اللهجة</span><div>${a.dialect?(DL[a.dialect]||esc(a.dialect)):'غير معروفة'}</div></div>
+          <div class="row"><span>احتمالات أخرى</span><div class="alts">${others.map(([l,p])=>`<div class="alt" style="${tc(l)}"><span>${TL[l]||esc(l)}</span><div class="track" role="img" aria-label="${TL[l]||esc(l)} ${pct(p)}"><div class="fill" style="width:${Math.round(p*100)}%"></div></div><span class="num">${pct(p)}</span></div>`).join('')}</div></div>
+          <div class="row"><span>الكيانات</span><div>${a.entities.length?a.entities.map(e=>`<span class="ent">${esc(e.text)}<i>${esc(e.type)}</i></span>`).join(''):`<span class="muted">${H.ner===false?'نموذج الكيانات ما تحمّل بعد.':'ما فيه كيانات في الرسالة.'}</span>`}</div></div>
+          <div class="row"><span>حالات مشابهة</span><div>${a.similar.length?a.similar.map(s=>`<div class="sim">${esc(s.text)}<small>${esc(s.resolution)}</small></div>`).join(''):`<span class="muted">${H.search===false?'فهرس البحث ما تحمّل بعد.':'ما فيه حالات قريبة.'}</span>`}</div></div>
+        </div>
+        <div class="tech">${esc(a.models.topic)}, preprocess v${esc(a.preprocess_version)}, ${a.latency_ms} ms</div>`;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>$('out').classList.add('shown')));
+    }catch(e){$('out').innerHTML=`<div class="err" role="alert">${esc(e.message)}</div>`}
+  });
+};
+
+$('bgo').onclick=()=>{
+  const texts=$('bt').value.split('\n').map(s=>s.trim()).filter(Boolean); if(!texts.length){$('bt').focus();return}
+  return busy($('bgo'),'جارٍ الفرز…',async()=>{
+    try{
+      const r=await post('/v1/classify:batch',{texts,bucket:true});
+      const lows=r.results.filter(x=>x.confidence<LOW).length;
+      const counts={}; r.results.forEach(x=>counts[x.label]=(counts[x.label]||0)+1);
+      const order=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      $('bout').innerHTML=
+        `<div class="mix" role="img" aria-label="${order.map(([l,n])=>`${DEST[l]||esc(l)} ${n}`).join('، ')}">`+order.map(([l,n])=>`<span style="${tc(l)};flex:${n}"></span>`).join('')+`</div>`+
+        `<div class="legend">`+order.map(([l,n])=>`<span style="${tc(l)}">${DEST[l]||esc(l)}: ${n}</span>`).join('')+`</div>`+
+        (lows?`<div class="qwarn" role="alert">${lows} من ${r.n} رسائل ثقتها منخفضة، راجعها قبل التحويل.</div>`:'')+
+        `<ol class="items">`+r.results.map((x,i)=>`<li class="item" style="${tc(x.label)}"><span class="txt" dir="auto" title="${esc(texts[i])}">${esc(texts[i])}</span><span class="to">${DEST[x.label]||esc(x.label)}${x.confidence<LOW?'<span class="flag">راجعها</span>':''}</span><span class="num">${pct(x.confidence)}</span></li>`).join('')+`</ol>`+
+        `<div class="qtech">${r.n} messages, ${r.latency_ms} ms, ${r.items_per_sec} items/s</div>`;
+    }catch(e){$('bout').innerHTML=`<div class="err" role="alert">${esc(e.message)}</div>`}
+  });
+};
+$('msg').value=EX[0][2]; count();
+</script>
+</body>
+</html>

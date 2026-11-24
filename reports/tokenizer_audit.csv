@@ -1,0 +1,9 @@
+tokenizer,lang,fertility,unk_rate,p95_len
+distilbert-base-multilingual-cased,ar,2.294305724725944,0.0,35
+distilbert-base-multilingual-cased,en,1.3613399231191652,0.0,27
+xlm-roberta-base,ar,1.7550243605359317,0.0,26
+xlm-roberta-base,en,1.256727073036793,0.0,26
+CAMeL-Lab/bert-base-arabic-camelbert-mix,ar,1.3826126674786845,0.0,22
+CAMeL-Lab/bert-base-arabic-camelbert-mix,en,2.413234486545854,0.0,45
+aubmindlab/bert-base-arabertv2,ar,1.6775274056029232,0.0,27
+aubmindlab/bert-base-arabertv2,en,1.9818780889621088,0.0,38

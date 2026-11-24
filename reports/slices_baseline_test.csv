@@ -1,0 +1,5 @@
+slice,value,n,clusters,macro_f1,ci_lo,ci_hi,flag
+ALL,ALL,210,36,1.0,1.0,1.0,
+dialect,en,63,12,1.0,1.0,1.0,
+dialect,gulf,84,12,1.0,1.0,1.0,
+dialect,msa,63,12,1.0,1.0,1.0,

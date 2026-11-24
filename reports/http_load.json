@@ -1,0 +1,11 @@
+{
+  "model": "onnx-int8",
+  "concurrency": 16,
+  "requests": 800,
+  "p50_ms": 270.0145465000787,
+  "p95_ms": 459.46995084962055,
+  "p99_ms": 542.318243789714,
+  "rps": 56.38060498739838,
+  "budget_ms": 40,
+  "within_budget": false
+}

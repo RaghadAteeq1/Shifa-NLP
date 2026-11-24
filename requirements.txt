@@ -1,0 +1,20 @@
+# core (data, baseline, preprocessing, metrics, service)
+numpy
+pandas
+scikit-learn
+joblib
+fastapi
+uvicorn
+httpx
+pydantic
+matplotlib
+pytest
+# models, search, export (training machine; GPU recommended)
+torch
+transformers
+datasets
+accelerate
+onnx
+onnxruntime
+sentence-transformers
+faiss-cpu
