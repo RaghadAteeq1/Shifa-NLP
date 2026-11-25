@@ -1,8 +1,0 @@
-# Lightweight production dependencies for the live demo (CPU baseline)
-numpy
-pandas
-scikit-learn
-joblib
-fastapi
-uvicorn[standard]
-pydantic
